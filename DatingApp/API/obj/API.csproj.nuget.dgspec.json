@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj": {}
+    "E:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj": {}
   },
   "projects": {
-    "e:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj": {
+    "E:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj",
+        "projectUniqueName": "E:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "e:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj",
+        "projectPath": "E:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\API.csproj",
         "packagesPath": "C:\\Users\\hungt\\.nuget\\packages\\",
-        "outputPath": "e:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\obj\\",
+        "outputPath": "E:\\Projects\\GitHub\\ASPNET-Core\\DatingApp\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\hungt\\AppData\\Roaming\\NuGet\\NuGet.Config",
