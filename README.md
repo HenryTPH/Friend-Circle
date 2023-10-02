@@ -81,3 +81,10 @@
     - Create a gitignore file: dotnet new gitignore, add appsettings.json to the file
     - Create globaljson file: dotnet new globaljson
         + This file tells us which version of the SDK we're going to use for this particular project
+22. Create the Angular app
+    - Install Angular CLI: https://angular.io/guide/setup-local
+    - Check Angular version: ng version
+        + If the system error appears, run set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+    - Create the client side: ng new client
+        + Angular routing: Yes
+        + Stylesheet format: CSS
