@@ -43,3 +43,41 @@
 16. Primary key of an entity
     - If we have a property name Id inside an entity classes, then entity framework will automatically use that as the primary key of our database
     - If we don't, then we have to add [Key] before the property
+17. Creating the connection string
+    - Appsetting.json is always read
+    - Appsettings.Development.json is read in development environment -> We should change this file
+    - Add those line below with datingapp.db is the name of the database file:
+        {
+            "Logging": {
+                ...
+                }
+            },
+            "ConnectionStrings": {
+                "DefaultConnection": "Data source=datingapp.db"
+            }
+        }
+    - Search for dotnet-ef in the browser or go to the link: https://www.nuget.org/packages/dotnet-ef/#readme-body-tab and run the command line code to install the tool.
+    - Run the command line: dotnet ef migrations add InitialCreate -o Data/Migrations
+        + This will add a new migrations name InitialCreate and output/stored in Data/Migrations.
+        + Run: dotnet build
+            $ Check if there is any error.
+18. Create the database using Entity Framework Code first migrations.
+    - To create the database, run the command: dotnet ef database update.
+    - Open a SQLite database:
+        + Install extension to read SQLite database.
+        + Use Shift+Ctrl+P -> choose Open SQLite database -> Choose the database file in the project.
+        + Under SQLite Explorer, we can examine the database.
+    - Insert some data to the table:
+        + Right click on the table, choose New Query [Insert].
+19. Add a new API Controller:
+    - When adding [Route("api/[controller]")], if the name of Controller is User Controller, the path should be api/user (omit the word "controller").
+    - In Postman, turn of the SSL certificate in Settings if it does not allow you to use https.
+20. Make our code Asynchronous
+    - Add "async" word to the method
+    - Add Task<...> to the return type of method
+    - Add "await" to the inside method
+    - Change the inside method asSync
+21. Source control
+    - Create a gitignore file: dotnet new gitignore, add appsettings.json to the file
+    - Create globaljson file: dotnet new globaljson
+        + This file tells us which version of the SDK we're going to use for this particular project
