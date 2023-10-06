@@ -88,3 +88,14 @@
     - Create the client side: ng new client
         + Angular routing: Yes
         + Stylesheet format: CSS
+23. Create HTTP requests in Angular
+    - In app.module.ts: 
+        + Import Http module: import { HttpClientModule } from '@angular/common/http';
+        + Add HttpClientModule to @NgModule->Imports
+    - Implement OnInit interface in app.component.ts
+    - When running our webpage, there is an error in the Inspection by CORS policy.
+24. Adding CORS support in the API
+    - The error above because the browser security feature prevents hour browser fro downloading nasty data from a server that is different origin.
+    - Our API server is responsible for sending out CORS headers when a client web applicaiton wants to make an API request.
+25. Display the fetched users in the browser
+    - 
