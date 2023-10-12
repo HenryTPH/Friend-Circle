@@ -6,9 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")] // /api/users because the name of the file is UsersController, so the path will take the name before the word "Controller"
-public class UserController: ControllerBase
+//When using BaseApiController insteads of BaseController, we can omit those line of codes.
+// [ApiController]
+// [Route("api/[controller]")] // /api/users because the name of the file is UsersController, so the path will take the name before the word "Controller"
+public class UserController: BaseApiController
 {
     private readonly DataContext _context;
     public UserController (DataContext context)
