@@ -68,3 +68,11 @@ E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\client\tsconfig.ap
 E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\client\tsconfig.json
 E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\client\tsconfig.spec.json
 E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\global.json
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+E:\Projects\GitHub\ASPNET-Core\DatingApp\API\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
