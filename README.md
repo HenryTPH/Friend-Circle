@@ -418,3 +418,216 @@
     - Component communication fromparent to child
     - Component coommunication from child to parent
 50. Creating a nav bar
+    - On client side: 
+        + ng g --help (Look at generate method help document)
+        + ng g c nav --dry-run (Create nav component in dry run options which means no changes were made)
+            $ Create nav.component.css
+            $ Create nav.component.html
+            $ Create nav.component.spec.ts - use for testing
+            $ Create nav.component.ts
+            $ Update app.module.ts
+        + ng g c nav --skip-tests (Create nav component in skip tests option which means no changes were made and skip the test file)
+    - After running the cmd, in app.module.ts, NavComponent is added
+    - Copy nav bar from Carousel template in https://getbootstrap.com/docs/5.3/examples/carousel/# and paste to nav.component.html
+    - Explore the nav bar:
+        + Explain <div class="container-fluid">: Links and search bar are stretched to the edge of the display
+        + Explain class="navbar-toggler": Collapse our nav bar to toggler
+51. Introduction to Angular template forms
+    - Should read: https://www.geeksforgeeks.org/whats-the-difference-between-an-angular-component-and-module/
+    - Turn Submit form into an angular form
+        + Give it the template reference variable: #loginForm="ngForm" - loginForm is provided by NgForm
+        + The ng-submit directive specifies a function to run when the form is submitted.
+        + Set autoComplete off
+        <form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off">
+        + For input, we give the name: name="username"
+        + Two way binding to the component and angular form, we need to use square brackets followed by parentheses and then specify the object name with its property
+        <input name="username" [(ngModel)]="model.username" class="form-control me-2" type="text" placeholder="Username">
+    - At the end of this step, we can take the information from the form.
+52. Introduction to Angular services
+    - We will make this request to send this data up to our API so we can actually log in.
+    - Create new folder inside src/app/_services
+    - Create a service: ng g s folder/account --skip-tests
+        + It will create the file call account.service.ts
+        + We have a decorator called Injectable and Angular services can be injected into our components or into other services
+            $ Metadata called providedIn:'root': will automatically add this new service to the providers array in app.module.ts
+    - When we create a component, each time that component is destroyed, anything stored inside will be also destroyed, while the services will live for the liftime of our application
+    - The file account.service.ts:
+        + Make the HTTP request from out client to our server.
+        + We use the service to centralize our HTTP requests
+        + In Angular, when the service is singleton which is provided in the root module (in app module), our app and the services will be initialized at the same time. The service will not be destroyed until our application is finished or the user is finished with our application.
+        + In constructor, we have to inject HTTPClient as a parameter
+        + Create a function login and return a post http to send the data from the form to the server. 
+            $ The HTTP POST will return an Observable of the response, with the response body as an object parsed from JSON
+    - The nav.component.ts:
+        + Inject AccountService to the constructor
+        + In login function, we will use the login function injected from the accountService.
+        + Because we return an observable from the service, we need to subscribe to this to get back the observed object
+            $ next: what do we want to do next with this observable
+            $ error: Take the error we get back from the server
+54. Using conditionals to show and remove the content
+    - File nav.components.ts: add the function loggout to set the loggedIn to false
+    - We will hide the context in nav bar. Actually, we will remove the content from the DOM, the domain object model => Go to nav.component.html
+        + We will use Angular structural directive.
+        + A structural directive always begins with an asterix => *ngIf
+        + Then we can use ngIf to decide whether or not to display this content, inside the double quote, we use the name of boolean variable in nav.component.ts
+        + If we don't want to remove the content from the DOM, we can use [hidden]
+55. Using Angular bootstrap components - Dropdown
+    - Explore the Dropdown bootstrap at: https://valor-software.com/ngx-bootstrap/#/components/dropdowns?tab=api
+    - Install the API: ng add ngx-bootstrap --component dropdowns
+        + UPDATE package.json (1125 bytes)
+        + UPDATE angular.json (3068 bytes)
+        + UPDATE src/app/app.module.ts (805 bytes) => Add BsDropdownModule.forRoot()
+    - In Bootstrap Overview site -> Notify and go back to nav.component.html.
+    - In nav.component.html:
+        + In class "dropdown", add the word "dropdown"
+        + In class "dropdown-toggle", add the word "dropdownToggle"
+        + In the class "dropdown-menu", add the words "*dropdownMenu"
+        + Delete the Logout button on the nav bar.
+    - In nav.component.css: Change the mount pointer to pointer stype
+        + Add the following code: 
+            .dropdown-toggle, .dropdown-item{
+                cursor: pointer;
+            }
+56. Introduction to observables
+    - What are Observables?
+        + New standard for managing async data included included in ES7 (ES2016)
+        + Introduced in Angular v2
+        + Observables are lazy collections of multiple values over time.
+        + Like a newsletter
+            $ Only subscribers of the newsletter receive the newsletter
+            $ If no-one subscribes to the newsletter it probably will not be printed
+    - Promises vs Observables
+        + Promises:  
+            $ Provide a single value in the future
+            $ Not lazy
+            $ Cannot cancel
+        + Observable:
+            $ Emits multiple values over time
+            $ Lazy
+            $ Able to cancel
+            $ Can use with map, filter, reduce and other operators
+    - Observable and angular:
+        + An async method will return an observable
+            $ Example: getMembers(){ return this.http.get('api/users') }
+        + We need to subscribe to the service.
+    - Observables and RxJS (Reactive extension for javascript):
+        + We can transform data before we pass it to the subscriber, that is when RxJS comes in.
+        + We will add a pipe method to the request/observable
+            $ Example: getMembers(){ return this.http.get('api/users').pipe( map (members => { Console.log(members.id); return members.id}))}
+    - Getting data from observables
+        + Subscribe
+        + After we subscribe, we have to add what we want to do next - next function; what if there is an error - error function; What to do when complete - complete function.
+        + Not automatically unsubscribes the service.
+            $ Example: getMembers(){ this.service.getMembers().subscribe(members => {this.members = members}, error => {console.log(error)}, () => {console.log('completed')}) }
+        + ToPromise()
+        + Another way to get the data from observables without subscribing to them is we can send them to a normal JavaScript promise
+            $ Example: getMembers(){ return this.http.get('api/users').toPromise()}
+    - Async pipe
+        <li *ngFor='let member of service.getMembers() | async'>{{member.username}}</>
+        + Explaination: We got an ngFor and memebr of service, then we pipe this into the async pipe. Then we've got access to the properties inside member using the async pipe
+        + This will automatically subscribes and unsubscribes from the Observables.
+57. Persisting the login
+    - When using components, they dont remember things for very long. So we will use service to persist out login until the user close the browser.
+    - In account.service.ts, login function:
+        + Modify the response from HTTP POST, map response as any, if user exists, store user as item in localStorage so that we can access it anywhere from our application
+    - Inside app folder, create _models/user.ts:
+        + Export interface called User with username as string and token as string.
+    - Back to account.service.ts, login function:
+        + Set response to User type => There will be a complaint displayed
+        + We have to specify the type that HTTP POST return which is User DTO => ...post<User>(...)
+    - Currently, only component know if we logged in is the NAV component. But we need that information elsewhere inother components as well => We will create an observable inside our account service so that the other components can use the account service to ascertain whether or not a user is logged in.
+    - We will use a special kind of observable called a behavior subject which allow us to give an observable an initial value that we can then use elsewhere in our app.
+        + Create a private filed type BehaviorSubject
+            $ private \fieldName\ = new BehaviorSubject<User | null>(null)
+        + Create an observable object:
+            $ current$ = this.\fieldName\.asObservable()
+            $ The '$' sign presents that this is an observable
+    - If we log in successfully, we have to update the current user source/behavior subject by adding the user to the next of BehaviorSubject
+        + Example: this.currentUserSource.next(user)
+    - In account.service.ts, logout function, we also update the currentUserSouce to null
+    - In account.service.ts, we also create a convenient function setCurrentUser with parameter is user and set the curentUserSource to this user.
+        + setCurrentUser(user: User){this.currentUserSource.next(user);}
+    - In app.component.ts, 
+        + In constructor, add AccountService as a parameter.
+        + Add a method to set the current user
+            $ We can use JSON.parse(localStorage.getItem('user')!)
+            $ Or we can check if there is any userString we can get from localStorage.
+            $ Then set the current User to this user
+        + In ngOnInit function, add setCurrentUser function to this method.
+    - In nav.component.ts:
+        + In logout function, use accountService logout function.
+        + Add getCurrentUser function, we use accountService to get currentUser$ - observable, then we need to subscribe.
+        + In subscribe, we will set the next function with the loggedIn to !!user - !! will turn user to a boolean, if user exists, it true, else false. And we set the error function for subscribe.
+        + In ngOnInit, add getCurrentUser to it.
+    => So in every component, we have to create getCurrentUser in ngOnInit.
+58. Using the async pipe
+    - In HTTP request, it's not necessary to unsubscribe because it will automatically do that.
+    - In component, it is good to unsubscribe the service
+    - But we have a better way that is use the async pipe in our template. It will automatically subscribe and unsubscribe for us.
+    - In nav.component.ts:
+        + Delete loggedIn property.
+        + Add currentUser$ as observable User
+            $ When we have Angular in strict mode, we have to initialize class properties, if not we will get a warning
+            $ In observable type, we cannot just say it null. We need to use an operator which in this case, we use an Observable Of something - of(null)
+        + In ngOnInit(), replace this.getCurrentUser() by this.currentUser$ and get user directly from accountService.
+        + In getCurrentUser(): We dont need this method anymore.
+    - In nav.component.html:
+        + Class "navbar-nav me-auto mb-2 mb-md-0", replace loggedIn by currentUser$ | async
+            $ It means: if this has something that's not null, then we know we are logged in and we'll do the same for the class "dropdown" and "d=flex"
+    - ANOTHER WAY TO SIMPLIFY:
+        + We can remove the current user observable in nav.component.ts (the property currentUser$ and the line inside ngOnInit method)
+        + In nav.component.ts: in constructor, change "private accoutnService" to "public accountService". Because when we use private modifier inside our component, that means we can only use the account service inside the component itself, not inside a template
+        + In nav.component.html: change currentUser$ to accountService.currentUser$
+59. Adding a home page
+    - Run the command: ng g c home --skip-tests
+    - In home.component.html, add html code
+    - In home.component.ts, add registerMode property and registerToggle method.
+    - In app.component.html, replace all previous code with <app-home></app-home>
+60. Adding a register form
+    - Run the command: ng g c register --skip-tests
+    - We will use a template form initially for the register component called model
+    - In register.component.ts:
+        $ Add register method and cancel method
+    - In register.component.html:
+        $ Add form.
+61. Parent to child communication
+    - At home component, we can see register component is a child of home component or home component is parent of regisster component.
+    - Now we will pass information from home component - the parent - to the registered component - the child.
+        + In app.component.ts: cut the get users method and paste it into our home.component.ts
+        + In home.component.ts: 
+            $ Paste the getUsers method from app.component.ts.
+            $ In contructor, add parameter http from HttpClient
+            $ We need a property to store users to get from the API in any type.
+            $ In ngOnInit, add this.getUsers method.
+    - We need to add something to our register component to get some information from a parent component => We need to use an input decorator which we get from angular core.
+    - In register.component.ts:
+        + Add @Input() #name: any;
+    - In home.component.html, app-register:
+        + Add [#name]="users"
+        + Now we're going to have access to this inside the register component as well
+    - In register.component.html:
+        + Add a div below Username
+62. Child to parent communication
+    - When we click on cancel button, we fire off an event that goes up to the home component. Which then causes the register mode flag inside the home component to change to false, which will then effectively close our register form.
+    - In register.component.ts:
+        + Add @Output() #name: new EventEmitter();
+        + Change cancel() method: this.cencelRegister.emit("we can add anything")
+        => In this case, we add false because we want to turn off the register mode in the home components.
+        + Go to parent component
+    - In home.component.ts
+        + Add a new method called cancelRegisterMode()
+63. Hooking up the register method to the service
+    - We'll look at actually registering our users to our API server.
+    - In account.service.ts: Add register(model: any) method.
+    - We don't need to pass our users down from the home component. So we will clean the @Input we did in section 61 in register.component.ts and register.component.html and home.component.html ([usersFromHomeComponent]="users").
+    - In RegisterComponent of register.component.ts:
+        + Modify constructor: Add parameter to constructor as acountService
+        + Modify register method: Add code to call register method of accountService
+    - Try to test the register in the client side
+        + In the network tab when inspection, there are 2 register requests.
+        + When we make an HTTP request to an API server, there's two requests really once a pre-flight request to see what headers it supports and where the cause is enabled.
+        + In console tab: There is an undefined object in line 21 of register.component.ts.
+            $ If we go back to our account service, we can see in our register method we're using the return keyword, which means we're returning from this register method. But we didn't get the response. 
+            $ We do have to return from this because our component needs to know if the request has been completed.
+            $ But when we used MAP and we project as we are doing in this case, then if we want to return the response.
+            $ To get the retun, in account.service.ts, register method, add "return user".
