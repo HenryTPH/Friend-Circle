@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { Observable, of } from 'rxjs';
 import { User } from '../_models/user';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +14,9 @@ export class NavComponent implements OnInit{
   model: any = {};
   // currentUser$: Observable<User | null> = of(null) // Section 58
 
-  constructor(public accountService: AccountService) {}
+  constructor(public accountService: AccountService, 
+              private router: Router,
+              private toastr: ToastrService) {}
 
   ngOnInit(): void {
     // this.currentUser$ = this.accountService.currentUser$; // Section 58
@@ -29,10 +33,8 @@ export class NavComponent implements OnInit{
 
   login(){
     this.accountService.login(this.model).subscribe({
-      next: response => {
-        console.log(response);        
-      },
-      error: err => console.log(err)
+      next: () => this.router.navigateByUrl('/members'),
+      error: err => this.toastr.error(err.error),
     })
     console.log(this.model);
   }
@@ -40,5 +42,6 @@ export class NavComponent implements OnInit{
   logout(){
     //Remove the item in the localStorage when log out
     this.accountService.logout();
+    this.router.navigateByUrl('/')
   }
 }
