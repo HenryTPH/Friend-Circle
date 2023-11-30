@@ -25,7 +25,7 @@ export class NavComponent implements OnInit{
 
   // getCurrentUser(){ // Hide it in section 58
   //   this.accountService.currentUser$.subscribe(
-  //     {next: user => this.loggedIn = !!user,
+//     {next: user => this.loggedIn = !!user,
   //       error: err => console.log(err)
   //     }
   //   )
@@ -34,7 +34,7 @@ export class NavComponent implements OnInit{
   login(){
     this.accountService.login(this.model).subscribe({
       next: () => this.router.navigateByUrl('/members'),
-      error: err => this.toastr.error(err.error),
+      // error: err => this.toastr.error(err.error),
     })
     console.log(this.model);
   }
