@@ -631,3 +631,375 @@
             $ We do have to return from this because our component needs to know if the request has been completed.
             $ But when we used MAP and we project as we are doing in this case, then if we want to return the response.
             $ To get the retun, in account.service.ts, register method, add "return user".
+****** ROUTING IN ANGULAR ********
+64. Introduction
+    - So far, we've been using simplel conditionals to either show or hide a component such as we did with our home component and the register form.
+    - This section we will go to upper level and implement routing in our Angular app and have an understanding Angular routing.
+    - We'll build a single page application and we only have a single page, which means we need a routing solution so that we can navigate between different components rather than different pages, as we would do in a traditional HTML website.
+    - Now, our application don't really provide any security, but they do allow our application to prevent users from getting to certain components if we don't want them to.
+    - We will use a shared module
+65. Creating some more components
+    - Run the command:
+        + ng g c members/member-list --skip-tests
+        + ng g c members/member-detail --skip-tests
+        + ng g c lists --skip-tests
+        + ng g c messages --skip-tests
+    - In app-routing.module.ts: where we define the different routes that available in our angular application and specify it in Routes array, which is being passed to the router module for root and then specify what's contained inside this variable, which is going to be an array of our root.
+        + It imports Router module and exports the root module.
+        + Add the path and component to the Routes array in order and whatever matches.
+        + If we have an empty route, it's going to load the home component
+        + If there is only forward slash, the path with 2 asterisks will represent anything that's not in this list or this array.
+        + The wildcat routes must be specified a path match which is full - Because emtpy path is a prefix of any URL, the router would apply the redirect even when navigating to the redirect destination, create an endless loop.
+    - In app.module.ts: 
+        + In imports section, there is AppRoutingModule
+    - In app.component.html:
+        + Replace <app-home></app-home> with <router-outlet></router-outlet>
+67. Adding the nav link
+    - In nav.component.html:
+        + In class nav-link, Matches:
+            $ Change href to routerLink="/members"
+            $ Change to other like that form with the same as router
+            $ Besides, add routerLinkActive="active" to highlight the link when we're working on that link.
+68. Routing in code:
+    - The router provides a whole bunch of services to hep us.
+    - In nav.component.ts:
+        + To use the router/enabling routing ENCODE, we need to inject it into the constructor.
+        + In constructor, add router from Angular Router - A service that provides navigation among views and URL manipulation capabilities.
+        + So after we login, we will use router to route us to somewhere else.
+        + In login method, next function, we will add the route we want to navigate to. Ex: this.router.navigateByUrl('/');
+        + In logout method, we will add the route we want to navigate when user logout.
+69. Adding a toast service for notifications:
+    - We will take care of how we can notify our users if something has gone wrong.
+    - Google search: ngx-toastr => https://github.com/scttcper/ngx-toastr
+    - In terminal, client folder:
+        + Run npm install ngx-toastr@17
+    - Step 1: Add CSS:
+        + We use angular-cli: 
+            $ Copy "node_modules/ngx-toastr/toastr.css" and paste to angular.json -> styles
+    - Step 2: Add ToastrModule to app NgModule, or provideToastr to providers, make sure you have BrowserAnimationsModule (or provideAnimations) as well.
+        + Copy ToastrModule.forRoot(), and paste to app.module.ts -> imports section.
+    - In nav.component.ts:
+        + In constructor: Add ToastrService
+        + In login method, in error section, we will use ToastrService
+    - In register.component.ts:
+        + In constructor: Add ToastrService
+        + In login method, in error section, we will use ToastrService
+    - Move the message the right below of browser:
+        + In app.module.ts: 
+            $ Add some change like this: ToastrModule.forRoot({
+                                                positionClass: 'toast-bottom-right'})
+70. Adding an Angular route guard
+    - Angular provide a route guard and it will check which route we're about to activate and see if we meet the conditions that we're going to apply to this route guard. 
+    - If we don't meet the conditions, it won't allow us to activate the route and it will give us an opportunity to display a toast
+    - In terminal, client folder:
+        + Run: ng g g _guard/auth --skip-tests -> Choose canActivate
+    - In auth.guard.ts:
+        + Inject AccountService
+        + Inject ToastrService
+        + Add return for the function
+    - In app-routing.module.ts:
+        + Modify: {path:'members', component: MemberListComponent, canActivate: [authGuard]} - It will check to see if it can activate that route
+71. Adding a dummy route:
+    - The purpose of adding a dummy route is to provide child routes that are all protected by the same offguard guard
+    - In app-routing.module.ts:
+        + Create another route by changing like below: 
+            const routes: Routes = [
+                {path:'', component: HomeComponent},
+                {path:'',
+                    runGuardsAndResolvers: 'always',
+                    canActivate: [authGuard],
+                    children: [
+                    {path:'members', component: MemberListComponent},
+                    {path:'members/:id', component: MemberDetailComponent},
+                    {path:'list', component: ListsComponent},
+                    {path:'messages', component: MessagesComponent},
+                    ]
+                },  
+                {path:'**', component: HomeComponent, pathMatch: 'full'},
+                ];
+    - In nav.component.html:
+        + Add ng-container which is not going to be visible in our HTML. Put all Matches, Lists, Message inside ng-container.
+72. Adding a new theme
+    - Go to https://bootswatch.com/
+    - In client folder, run npm install bootswatch
+    - In angular.json:
+        + Styles section, below boostap.min.css:
+            $ Add: node_modules/bootswatch/dist/united/bootstrap.css 
+    - In nav.component.html:
+        + In the first line, change bg-dark to bg-primary to get the orange color for nav bar.
+        + For the Login button: change btn-outline-success to btn-success
+        + Change (accountService.currentUser$ | async) as user and Welcome user line to Welcome {{user.username | titlecase}} - titlecase will capital the first letter of the name.
+73. Tidying up the app module by using a shared module
+    - We will create a shared module where anything they add from third party components will use the shared module and keep the app module just for angular related imports. This will tidy up our app module and keep it clean.
+    - In client folder, run ng g m _modules/shared --flat (flat will not create in separate folder)
+    - In app.component.ts:
+        + Cut BSDropdownModule and Toastrmodule and paste to shared.module.ts->import section
+        + Add SharedModule to import section instead.
+    - In shared.module.ts:
+        + After imports section, add an array of Exports which contains BsDropdownModule and ToastrModule.
+76. Creating an error controller for testing errors
+    - In API folder -> Controllers -> create new class called BuggyController
+    - In BuggyController:
+        + Add controller as other file
+        + Add GetSecret method as HTTPGet with [Authourize] which its purpose is to ensure we can return 401 unauthorized from this when a user is not authenticating against this particular endpoint.
+        + Similarly, add other methods with the same pattern named GetNotFound, GetServerError, GetBadRequest.
+            $ Note: Cannot use NotFound() and BadRequest(). Instead, we have to use return new NotFoundResult() and new BadRequestResult()
+    - In RegisterDto.cs:
+        + In the field password, add [StringLength(8, MinimumLength = 4)] - which means max length is 8 and min length is 4.
+    - Open Postman -> Section 7 -> Run Get Null Ref Error
+        + The result is: Object reference not set to an instance of an object => Because of thingToReturn = thing.ToString() which is a null result used ToString method.
+77. Handling server errors
+    - In launchSettings.json -> ASPNETCORE_ENVIRONMENT: We are in development mode => Change this to Production to run in production mode.
+    - Back to Postman, section 7, when running an API, we only get status: 500 Internal Server Error => In Production mode, we don't have enough information to tell us what's going wrong when we encounter an exception.
+    - However, in terminal, we still get information about the exception.
+    - Change back to development mode.
+    - Handling error:
+        + If we saw something in our code that could potentially throw an exception, then we'd want to wrap this inside a try catch block so that we can catch and handle the exception.
+        + This time, we're handling the error inside our code before the middleware.
+        + The middleware where the app developer exception page would have been at the top of out middleware in Program.cs below the line of var app = builder.Build();
+        + So if we have a problem inside any of these other pieces of middle ware, then the exception gets thrown up the chain until it gets to the very top and it's handled by the developer exception page middleware.
+        + But here, we're overriding that in our code by handling the exception inside the method itself.
+    - But we don't want to handle each method. Instead, we will handle exceptions at the highest level. Because if we have our exception handling middleware at the top of the middleware tree, then exceptions always get thrown up to the next level until eventually they are handled by somthing.
+    - Handling error in highest level:
+        + Remove try catch block code back to before.
+        + Create our own middleware to handle exceptions.
+78. Exception handling middleware
+    - We'll create our own middleware to handle exceptions
+    - Create Errors folder in API folder
+    - Create ApiException.cs which will contain the response of what are we going to send back to the client when we have an exception
+        + The class will have those properties: status code, message, and details.
+    - Create Middleware folder to store any middleware we're going to create.
+    - Create ExceptionMiddleware.cs inside Middleware folder.
+        + Create constructor with some parameters.
+            $ A RequestDelegate called next
+            $ An ILogger with the type of the name of the class that we're using that we want to log out for.
+            $ An IHostEnvironment called env => allow us to see whether we're running in development mode or in production mode.
+            $ The first one is essential, the other two is optional.
+        + Create a method called InvokeAsync
+            $ This method has to be called invoke async because we're relying on the framework to recognize or we're going to tell our framework that this is middleware. The middleware will expect to see a method called invokeAsync as that's what it uses to decide what's going to happen next.
+            $ Because middleware does from one bit of middleware to the next bit of middleware to the next bit of middleware always calling next. That is RequestDelegate - what's going to happen after I've done my part OR Who's the next bit of middleware that we need to go onto.
+            $ The parameter of this method is HttpContext - give us an access to the HTTP request that's currently being passed through the middleware.
+            $ We will use try catch block inside our middleware
+            $ In try block, we point out what to do next is pass through the HTTP context
+            $ In catch block:
+                a. First thing to do is using logger to  log the error => ensure that we're not silent when handling this error because we can always see what's going on in terminal whether we're running in production or development mode.
+                b. Next, we will set up the context which will return something to the client
+                    1. Context.Response.ContentType: We don't do this inside API controllers because this is the default. We're now not inside API controllers so we have to specify that ourselves.
+                    2. Context.Response.StatusCode: we must cast it into integer
+                    3. Generate response: We will check our environment to see if we're running in development mode or production mode.
+                        - If we are in development mode, we will create new ApiException object with status code, ex.message, and ex.StackTrace?.ToString() - the entire stack trace of exception, use optional because we may not have this.
+                        - If we are in production mode, in the detail of ApiException, add a string "Internal Server Error".
+                    4. Create some options for our JSON response:
+                        - Create new JsonSerializeOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase}; - This is the default in API Controller
+                    5. Create json response:
+                        - Create JsonSerializer.Serialize(response, options)
+                    6. Write the response from json response:
+                        - await context.Response.WriteAsync(json);
+    - In Program.cs:
+        + Below the declaration of app
+        + Add app.UseMiddleware<ExceptionMiddleware>();
+    - Try to run with Postman
+79. Testing error in the client
+    - In client folder, run command: ng g c errors/test-error --skip-tests
+    - In test.component.ts:
+        + Create baseUrl property
+        + Create constructor with HTTPClient as property
+        + Create method called get404Error(), get400Error(), get500Error(), get401Error(), get400ValidationError()
+    - In test-error.component.html:
+        + Add 5 button to call each function
+    - Back to app-routing.module.ts: Add the new module above HomeComponent
+    - Back to nav.component.html: Add a link so that we can navigate to error page.
+80. Adding an error interceptor
+    - Error interceptor allows us to intercept HTTP requests when they either go out to our API or when they come back from our API and we're interested in what our API is returning so that we can intercept these HTTP errors => we can handle it and split out the appropriate response
+    - In client folder, run the command: ng g interceptor _interceptors/error --skip-tests
+    - In error.interceptor.ts:
+        + In constructor, add properties: 
+            $ Router: redirect the user if we need to, depending on the error that we get back from the API
+            $ ToastrService: add a notification for anything that the user has done, and we need to tell them
+        + In intercept method, we have HTTP request, and HTTP Handler for what happen next
+            $ The handle request will return Observable => We want to modify, we have to use pipe to catchError
+81. Validation errors
+    - In error.interceptor.ts, case 400, throw modelStateErrors is returning an array which will display multi array. We will change it to a single array by flatten it. 
+    - When it comes to validation errors, typically a user is going to be filling out a form and we will want to display on that form somewhere what they've done wrong if they've completed a field incorrectly.
+    - In test-error.component.ts:
+        + Method get400ValidationsError: We will getting back an array from this and we want to usse that array in the test error component template.
+        + Add a property called validationError as string array.
+        + Assign the err from get400ValidationError to validationError property.
+    - In test-error.component.html: Add the following line to display the error
+        <div class="row mt-5" *ngIf="validationError.length > 0">
+            <ul class="text-danger">
+                <li *ngFor="let err of validationError">{{err}}</li>
+            </ul>
+        </div>
+82. Handling not found
+    - In client folder, run the 2 following commands:
+        + ng g c errors/not-found --skip-tests
+        + ng g c errors/server-error --skip-tests
+    - In app-routing.module.ts, add the following:
+        + {path: 'not-found', component: NotFoundComponent}
+        + {path: 'server-error', component: ServerErrorComponent}
+        + Change {path:'**', component: NotFoundComponent, pathMatch: 'full'}
+    - Back to nav.component.ts:
+        + In login method, remove error line becase it is handled in interceptor now
+83. Adding a server error page
+    - In server-error.component.ts:
+        + constructor method: inject router
+        + get the current navigation from router
+        + Set the error property
+    - In server-error.component.html:
+        + Add some html
+86. Extending the user entity
+    - In AppUser.cs, add some user properties DateOfBirth, KnownAs, Create as DateTime.UtcNow, Last Active as DateTime.UtcNow, Gender, Introduction, LookingFor, Interests, City, Country, List of Photo
+        + UTC is equivalent to GMT time, but it's standard time zone in worldwide and it doesn't matter what location somebody is in.
+        + Create a class Photo with some properties: Id, Url, IsMain, PublicId.
+87. Adding a DateTime extension to calculate age
+    - In AppUser.cs, add GetAge method and return DateOfBirth.CalculateAge().
+    - In Extensions folder, create new class called DateTimeExtensions with a method called CalculateAge.
+    - Then in AppUser.cs, add using API.Extensions to use the method.
+88. Entity Framework relationships
+    - We want a table in our database that's going to contain the photos, and there's going to be a relationship between the user and the photos => One user can have many photos.
+    - In Photo.cs:
+        + Add an attribute called [Table("Name of the Table")] from System.ComponentModel.DataAnnotations.Schema.
+        + It's going to set up the relationship between the app user and the photos.
+    - Run Add a new migration: dotnet ef migrations add ExtendedUserEntity
+    - But it will allow orphan photos in the database which are not relate to the user. => Remove the migration: dotnet ef migrations remove
+    - In Photo.cs, add some properties: AppUserId and AppUser (AppUser type)
+    - Now we can create a new migration.
+        + In the new migration, the constrains of the photo table shows that "onDelete: ReferentialAction.Cascade" -> When we delete a user entity that's going to cascade down to its related entity - photos
+    - Let update the database: dotnet ef database update
+89. Generate seed data
+    - We will use an online tool that's going to generate some random data that we can use to populate our database.
+    - Go to json generator: https://json-generator.com/
+        + This tool gives us a bunch of different options for generating random data.
+        + We can create grids, booleans, floating point values, integers, random array of things we can use first name, gender, etc...
+        + We can also provide this with functions returning customized data as well.
+        + In resources folder, we have a file named jsongenerator.
+            $ Copy the code and paste to json generator.
+            $ Click generate button a few times.
+            $ Choose copy JSON to clipboard.
+        + In API/Data folder, create new file named UserSeedData.json and paste the code in the clipboard.
+        + Repeat all the step to create for male account by replace female and women with male and men.
+90. Seeding data part 1
+    - In API/Data folder, create new file named Seed.cs:
+        + Create a method for a Task called SeedUsers having DataContext as an argument. We will use static for this method so that we do not need to create a new instance of the seed class.
+        + In this method, we will check our database if we have any users inside there already. Because we don't want to keep seeding data into our database if we already have it.
+        + Create a variable to Read the text in json file
+        + Create an options variable as JsonSerializerOptions with PropertyNameCaseInsensitive is true:
+            $ It will be bound regardless of whether or not we put that option in. If any of perperty name is in lowercase, then this would work.
+    - How to apply this seeding?
+        + Up to now, we've been using the .NET CLI tool to add our migrations and to update the database. BUT WE CAN ALSO DO THAT IN CODE.
+        + A good place to do this is when starting our application and the entry point for our application is the Program.cs class.
+    - In Programm.cs class:
+        + Below our MapControllers, add:
+            $ using var scope = app.Services.CreateScope();
+            $ var services = scope.ServiceProvider;
+        + We have to put our code in a try catch block:
+            $ This is Programm class. Although we've got exception handling middleware, this is not an Http Request, so it will not go through an Http request pipeline.
+            $ So we need to handle any exceptions we get from this and we will save our context equals services.
+            $ Create a context from services
+            $ Use MigrateAsync function to migrate new users to our database: This will applies any pending migrations for the context to the database. Will create the database if does not already exist.
+91. Seeding data part two:
+    - In terminal, API folder, we will drop our database
+        + Run: dotnet ef database drop
+        + Restart our application: dotnet watch --no-hot-reload
+    - In Postman, Section 8, there are 2 useful API:
+        + The Login API, paste a name of user to replace lisa and run it
+            $ Look at test tab: Those codes below will get the token from the user and set as a json name token. This can be use in the next API
+                const user = pm.response.json();
+
+                pm.test("Has properties", function () {
+                    pm.expect(user).to.have.property('username');
+                    pm.expect(user).to.have.property('token');
+                });
+
+                if (pm.test("Has properties")) {
+                    pm.globals.set('token', user.token);
+                }
+        + The Get Users API, in Authorization tab, we use Bearer Token, in Token box, this is the token above.
+92. The repository pattern
+    - In the Patterns of Enterpise Architecture, a repository is something that mediates between the domain and the data mapping layers, acting like an in-memory domain object collection.
+    - Now we're having a Web server, Controller, Dbcontext, and Database.
+        + Webserver will send API and request to controller endpoint
+        + In our controllers, we're injecting the DB context and our DB context represents a session with our database.
+        + DB context is translating the logic the logic, the queries that we're writing in a controller and getting the data from the database and returning it to the controller so that it could be returned to the client.
+    Web Server <=> Controller <=> DBContext <=> Database
+    - There is an effective layer of abstraction: the Repository
+        + Instead of the controller going directly to the DB context, it then uses our repository and executes the methods inside there.
+        + The repository will use the DB context to go and execute the logic inside this.
+        + This may seem unnecessary because the DB context itself acts as not a repository but ascts as another pattern.
+    Web Server <=> Controller <=> Repository <=> DbContext <=> Database
+        + One of the reason to use this is Encapsulates the logic inside our DB context.
+            $ Each DB context has DB sets, those DB sets have hundreds of different methods that you can use inside the DB sets.
+            $ By using a repository we encapsulate the logic and if a controller injects a repository, it's only got access to 4 methods that we need that controller to have.
+        + Another reason is to reduce duplicate query logic. So if wee had a method in our users controller to get a user and included some related data, but we also needed that same logic in our message controller and we also needed it in another controller as well. We would end up writing the same queries over and over again.
+            $ If we use the repository, we can create a logic in one place and then we can simply execute the methods from the repository in our different controllers.
+        + If we were including testing, it's much easier to test against a repository than it is to test against a DB context.
+        UnitTest <=> Controller <=> MockRepository
+            $ Our repositories are going to have interfaces and we're going to have an implementation class for the repository.
+            $ So we will inject the repository interface into our controllers.
+            $ Then, we have an implementation class that contains all of the actual logic.
+    - Advantages of Repository Pattern
+        + Minimizes duplicate query logic.
+        + Decouples application from persistence framework.
+        + All Database queries are centralised and not scattered throughout the app.
+        + Allows us to change ORM easily
+            $ No one ever changes their object relational mappings.
+            $ The interface that the controllers would use would not change because the idea of using the interface is it's a contract between the interface and the implementation.
+            $ The implementation class has to do what the interface says.
+        + Promotes testability
+            $ We can easily Mock a Repository interface, testing against the DbContext is more difficult
+    - Disadvantages of Repository Pattern
+        + Abstraction of an abstraction.
+        + Each root entity should have it's own repository which means more code.
+        + Also need to implement the UnitOfWork pattern to control transactions.
+93. Creating a repository
+    - Let's create an interface and an implementation for our new repository.
+    - In API/Interfaces, create a new interface called IUserRepository having the following methods.
+        + Update a user
+        + Save All Async as a Task
+        + Get User Async as IEnumerable which is a type of list of AppUser. 
+            $ A list is more powerful and it allows us to add and remove things from a list.
+            $ We use async because this is just going to get our users, there's no points at which we would want to add anything to this list in our code.
+        + Get User by Id
+        + Get User by username
+    - Create the implementation class in Data folder named UserRepository.cs
+        + Implement IUserRepository interface.
+        + Inject the data context and call it context: ctor
+        + In Update method, we use EntityState.Modified: tells our Entity Framework Tracker that something has changed with the entity, the user we've passed in here, we're not saving anything from this method at this point. We're just informing teh Entity Framework Tracker that an entity has been updated.
+    - In ApplicationServiceExtensions.cs:
+        + Add services.AddScoped<IUserRepository, UserReppository>
+94. Updating the users controller
+    - Go to UsersController.ts:
+        + Remove the _context variable.
+        + Inject IUserRepository interface.
+        + In GetUsers method, replace var users... by _userRepository.GetUsersAsync()
+            $ We will get an error when return the users because it cannot convert the IEnumerable to Collections
+            $ So instead return the users, we will wrap our call to repository in OK(...)
+        + In GetUser(id), we want to get by user name, so change the HttpGet id to username and the parameter of the method from id to username
+            $ We change the _context to our repository too
+    - We want it to return the photo in API, so in UserRepository.ts: 
+        + In GetUsersAsync method, it return the list as we asked. If we want it ot give us related data, then we need to explicitly tell entity framework to include related data.
+            $ Modify this method a little bit by adding include to the return method
+        + Do the same for the GetUserByUsernameAsynce method.
+    - Back to Postman, when run the API get users, it will display an error which is what we expect. We will fix it in 95
+95. Add a DTO for members
+    - Back in UserRepository.cs:
+        + In GetUsersAsync method: we ask to return a list of our users including the photos
+    - Open AppUser.cs and Photo.cs at the same time:
+        + The error in Postman: "A possible object cycle was detected" mean, it will return the Use having Photo and in Photo entity, there is AppUser id so on and so forth, it is a cycle.
+        + The solution is that we have to shaping our data which means we will use DTO and we will create a DTO that specifies exactly what we want to return.
+        + We will create 2 DTO, one for Users and one for Photo
+    - In DTO folder, create MemberDto.cs and PhotoDto.cs
+    - In MemberDto.cs:
+        + Copy all properties in AppUser.cs to MemberDto.cs.
+        + Delete PasswordHash and Salt, DateOfBirth
+        + Add method to return Age
+        + Modify Created and LastActive, delete all initials;
+        + In Photos property, change List<Photo> to List<PhotoDto> and remove the new();
+    - In PhotoDto.cs:
+        + Copy Id, Url, IsMain properties
+96. Adding AutoMapper
+    - Go to NuGet Gallery:
+        + Search for AutoMapper.Extensions.Microsoft.DependencyInjection by Jimmy Bogard
+        + We will use this to inject AutoMapper into our controllers or repositories and when we need it.
+    

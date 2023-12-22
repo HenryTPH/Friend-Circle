@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
         //When the controllers disposed of at the end of the HTTP request, then any dependent services are also disposed.
         //AddSingleton: The application first starts and is never disposed until the application has closed down. The service will hange around in memory.
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }
