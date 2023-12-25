@@ -20,6 +20,7 @@ public static class ApplicationServiceExtensions
         //AddSingleton: The application first starts and is never disposed until the application has closed down. The service will hange around in memory.
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         return services;
     }
 }
