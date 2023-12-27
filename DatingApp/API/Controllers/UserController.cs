@@ -35,9 +35,11 @@ public class UserController: BaseApiController
         // var users = await _userRepository.GetUsersAsync();
         // return users; - get an error
         // return Ok(await _userRepository.GetUsersAsync()); Section 97
-        var users = await _userRepository.GetUsersAsync();
-        var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
-        return Ok(usersToReturn);
+        // var users = await _userRepository.GetUsersAsync(); Section 99
+        // var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users); Section 99
+        // return Ok(usersToReturn); Section 99
+        var users = await _userRepository.GetMembersAsync();
+        return Ok(users);
     }
 
     // [HttpGet("{id}")] // /api/users/2
@@ -47,8 +49,9 @@ public class UserController: BaseApiController
     {
         // var user = await _context.Users.FindAsync(id);
         // return user;
-        var user =  await _userRepository.GetUserByUsernameAsync(username);
-        return _mapper.Map<MemberDto>(user);
+        // var user =  await _userRepository.GetUserByUsernameAsync(username);
+        // return _mapper.Map<MemberDto>(user);
+        return await _userRepository.GetMemberAsync(username);
     }
 
 }

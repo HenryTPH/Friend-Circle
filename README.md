@@ -1002,4 +1002,57 @@
     - Go to NuGet Gallery:
         + Search for AutoMapper.Extensions.Microsoft.DependencyInjection by Jimmy Bogard
         + We will use this to inject AutoMapper into our controllers or repositories and when we need it.
+    - Create Helpers folder:
+        + Create AutoMapperProfiles.cs
+            $ Inside this file, we have a AutoMapperProfiles class implement AutoMapper
+            $ The constructor will not have any params
+            $ We need to tell AutoMapper what we want to go from and what we want to go to inside our Constructor: CreateMap<()from) AppUser, (to) MemberDto> and CreateMap<Photo, PhotoDto>();
+    - The idea of AutoMapper is that it's going to compare the properties by their name and their type
+        + If in from Source and to Source both have the same field, it will map between that field.
+        + AutoMapper is also smart enough to know what if we've got a property in Dto called Age and a method in Source called GetAge. It will call GetAge method for that field. "Get" is very important.
+    - We will use this and inject it into our controller which means we need to add thsi as another service.
+        + Open the ApplicationServiceExtensions.cs
+        + Add Service and AutoMapper
+        + We need to tell this where AutoMapping profiles are.
+        + We only have a single project, which means our project will be running in the process that AutoMapper is already, but we still nedd to add somthing in the brackets which is the assembly for the current domain.
+97. Using AutoMapper
+    - In UserControllers.cs
+        + In the constructor, we add IMapper mapper as the controller and a property for IMapper for this. DON'T Forget to initial the mapper in constructor.
+        + Modified the GetUsers Task
+            $ The return OK caused the problem, so we need to modify it.
+        + Modified the Getuser method as well
+            $ After modification, there will be an error because the ActionResult return an AppUser, we need to change to MemberDto
+98. Configuring AutoMapper
+    - In MemberDto.cs
+        + Add a new property named PhotoUrl which is the user main photo
+    - We need to tell AutoMapper how to get that property or that URL and populate this particular field.
+    - In AutoMapperProfiles.cs:
+        + We will specify ForMember(/destination member that we want to populate here/, /Option and we will specify the source of where we want to map from/) method.
+        + Example: CreateMap<AppUser, MemberDto>()
+                    .ForMember(dest => dest.PhotoUrl, 
+                    opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url));
+99. Using AutoMapper queryable extensions:
+    - What are we doing in UserController.cs?
+        + We're getting the user by username and storing that in memory in users variable. 
+        + After that, we're using the mapping functionality to map it into our member DTO.
+        + We will look at our GetUserByUsername to get Full user from our database. How does that look in terms of a sequel query? => Look at the terminal when send an API request in Postman.
+        + We notice that the query will select password hash and password salt which don't have in DTO => This is not efficiency.
+        + What causing the problem is in our repository, we're asking our database to get the full entity from this database, and return it in memory to our controller. Then, we're manipulating that entity into a member DTO via Auto Mapper.
+        + We will extend our repository so instead of getting user, we're going to get our Members DTO directly from our repository by adding another task.
+    - In IUserRepository.cs:
+        + We will add another task: GetMembersAsync(), GetMemberAsynce(username)
+    - In UserRepository.cs: Implement the 2 added methods.
+        + In constructor: Add new parameter name mapper: AutoMapper
+        + Implement AutoMapper to map User to memberDto
+        + Do the same to GetMembersAsync method
+    - In UserController.cs:
+        + In GetUser method, modify to use the new methods added to UserRepository.cs
+        + In Postman, when sending an API to get User by username, the query in the terminal will have password hash and password salt.
+            $ Because, in the AppUser class, we have a method inside called GetAge. 
+            Automated needs to get the full entity in order to use this particular metho inside.
+            $ So we need to change our policy on this.
+    - In AppUser.cs:
+        + Comment out the method GetAge
+    - In AutoMapperProfiles.cs:
+        + We will add new element to deal with the Age property which we will use ForMember again.
     
