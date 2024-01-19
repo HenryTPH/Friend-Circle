@@ -1055,4 +1055,72 @@
         + Comment out the method GetAge
     - In AutoMapperProfiles.cs:
         + We will add new element to deal with the Age property which we will use ForMember again.
-    
+****** BUILDING THE USER INTERFACE ********    
+101. Learning Goals
+    - Using Typescript types
+    - Using the async pipe
+    - Using bootstrap for styling
+    - Basic css tricks to enhance the look
+    - Using a 3rd party photo gallery
+103. Creating the member interface
+    - We could go to vscode and start manually typing out our interface and defining all the properties.
+    - But as developers we are going to take a shortcut to do this:
+        + Copy the one sample user object (in json format)
+        + Google "json to ts" -> https://transform.tools/json-to-typescript
+        + Paste the json object and copy the ts object to vscode.
+        + We will have 2 new ts file member and photo
+104. Adding a member service
+    - Back to the account.service.ts:
+        + We have a hardcoded URL for base URL. But we want to move away from using hardcoded URLs in our application.
+        + TO DO that, we will add the environments folder:
+            $ In Client folder: Run ng g environments
+    - In Client/src/environments -> environment.development.ts, add some properties:
+        + production: false
+        + apiUrl:{{localhost url}}
+    - In Client/src/environements -> environment.ts:
+        + production: true
+        + apiUrl: 'api/'
+    - Now, we create member service in client/_services folder
+        + Run ng g s _services/members --skip-tests
+    - In members.service.ts:
+        + Add baseUrl
+        + Add HttpClient to constructor
+        + Add getMembers()
+        + We need to send up our token with this by creating a private method inside here and looking at a better way of doing this soon. We can pass up our token along with this request and the other request will be creating inside this service
+            $ Add method getHttpOptions(): we will pass up the authorization token inside the Http headers and we need to create some options to be able to do that.
+            $ The 'options' of the http.get includes headers.
+        + Add getMember(): get a specific member by username
+105. Retrieve the list of members
+    - In member-list.component.ts:
+        + Add implements OnInit
+        + Add constructor with MembersService as a parameter
+        + Add method loadMembers() use the getMembers method of the service. Because it return an observable object, we need to subscribe.
+    - In home.component.ts: remove getUsers method
+    - In member-list.component.html: add some html code to display the list of member in the browser.
+106. Creating member cards:
+    - In folder client:
+        + Run ng g c members/member-card --skip-tests
+    - In member-card.component.ts:
+        + We will pass data down to the child component (membercard is children of member list component)
+            $ Use @Input() member: Member
+            -> Error: "Property 'member' has no initializer and is not definitely assigned in the constructor."
+            $ The naughty solution: turn off some of the benefits in tsconfig.json
+            -> In tsconfig.json -> compilerOptions -> Add "strictPropertyInitialization": false -> Ignore any notification.
+            $ Another solution is define member as Member object: 
+            @Input() member: Member = {} as Member
+            -> However, the empty object is clearly not a member and if we don't have the member when this component initialized, we don't really want to trick TypeScript into specifying that.
+            $ The prefered way: say that our member could be undefined.
+            -> @Input() member: Member | undefined
+    - In member-card.component.html:
+        + Add card in html with img:
+            $ src="{{member.photoUrl}}" alt="{{member.knownAs}}
+            $ we can use ? (as optional) after member to fix the error, but we have to do that for every single property.
+            $ So we'd rather check to make surethat we have the member when we load this component before using its properties by using a conditional:
+            -> <div class="card mb-4" *ngIf="member">
+        + Add more properties for card: icon and member city
+    - In member-list.component.html:
+        + Cut *ngFor="let member of members" and paste to class='col-2'
+        + Add <app-member-card> component
+107. Adding some style to the card.
+
+
