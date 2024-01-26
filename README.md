@@ -1122,5 +1122,8 @@
         + Cut *ngFor="let member of members" and paste to class='col-2'
         + Add <app-member-card> component
 107. Adding some style to the card.
+108. Adding animated buttons
+109. Using an interceptor to send the token
+
 
 

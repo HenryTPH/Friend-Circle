@@ -13,21 +13,26 @@ export class MembersService {
   constructor(private http: HttpClient) { }
 
   getMembers(){
-    return this.http.get<Member[]>(this.baseUrl + 'user', this.getHttpOptions())
+    // Remove this.getHttpOptions() from section 109
+    // return this.http.get<Member[]>(this.baseUrl + 'user', this.getHttpOptions())
+    return this.http.get<Member[]>(this.baseUrl + 'user')
   }
 
   getMember(username: string){
-    return this.http.get<Member>(this.baseUrl + 'user/' + username, this.getHttpOptions())
+    // Remove this.getHttpOptions() from section 109
+    // return this.http.get<Member>(this.baseUrl + 'user/' + username, this.getHttpOptions())
+    return this.http.get<Member>(this.baseUrl + 'user/' + username)
   }
   // Pass up the authorization token
-  getHttpOptions(){
-    const userString = localStorage.getItem('user')
-    if(!userString) return;
-    const user = JSON.parse(userString)
-    return {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + user.token //Space behind the Bearer is very important
-      })
-    }
-  }
+  // Remove it from section 109
+  // getHttpOptions(){
+  //   const userString = localStorage.getItem('user')
+  //   if(!userString) return;
+  //   const user = JSON.parse(userString)
+  //   return {
+  //     headers: new HttpHeaders({
+  //       Authorization: 'Bearer ' + user.token //Space behind the Bearer is very important
+  //     })
+  //   }
+  // }
 }
