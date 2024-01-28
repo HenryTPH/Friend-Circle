@@ -1124,6 +1124,7 @@
 107. Adding some style to the card.
 108. Adding animated buttons
 109. Using an interceptor to send the token
-
-
-
+110. Routing to the detailed page
+111. Styling the member detailed page
+112. Styling the member detailed page part 2
+113. Adding a photo gallery (Angular 16) - run npm i ng-gallery @angular/cdk@16.2.0 because we are on angular 16.2.0

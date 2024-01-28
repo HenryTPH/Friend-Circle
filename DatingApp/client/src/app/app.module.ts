@@ -28,7 +28,7 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
     HomeComponent,
     RegisterComponent,
     MemberListComponent,
-    MemberDetailComponent,
+    // MemberDetailComponent, Section 113 - remove because in member-detail.component.ts, we add standalone: true and imports.
     ListsComponent,
     MessagesComponent,
     TestErrorComponent,
