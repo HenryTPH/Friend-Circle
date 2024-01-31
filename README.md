@@ -1123,8 +1123,12 @@
         + Add <app-member-card> component
 107. Adding some style to the card.
 108. Adding animated buttons
-109. Using an interceptor to send the token
-110. Routing to the detailed page
-111. Styling the member detailed page
-112. Styling the member detailed page part 2
-113. Adding a photo gallery (Angular 16) - run npm i ng-gallery @angular/cdk@16.2.0 because we are on angular 16.2.0
+107. Using an interceptor to send the token
+108. Routing to the detailed page
+109. Styling the member detailed page
+110. Styling the member detailed page part 2
+111. Adding a photo gallery (Angular 16) - run npm i ng-gallery @angular/cdk@16.2.0 because we are on angular 16.2.0
+115. Creating a member edit component
+116. Creating the edit template form
+117. Adding the update functionality
+118. Adding Can Deactive route guard
