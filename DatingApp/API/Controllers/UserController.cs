@@ -1,4 +1,5 @@
 using System.Net.NetworkInformation;
+using System.Security.Claims;
 using API.Data;
 using API.DTOs;
 using API.Entities;
@@ -54,4 +55,18 @@ public class UserController: BaseApiController
         return await _userRepository.GetMemberAsync(username);
     }
 
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+        // The User in the system.Security.Claims.Claims for user associated with the executing action
+        // In FindFirst method having ArgumentNullException will throw exception if the argument does not exist.
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userRepository.GetUserByUsernameAsync(username);
+        if (user == null) return NotFound();
+        // Map every properties in memberUpdateDto into user but has not updated to the database yer yet
+        _mapper.Map(memberUpdateDto, user);
+        // Return 204: everything is ok but there is nothing giving back
+        if(await _userRepository.SaveAllAsync()) return NoContent();
+        return BadRequest("Failed to update user");
+    }
 }
