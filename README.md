@@ -1,3 +1,6 @@
+How to run the app:
+- Run the command in /DatingApp/client: ng serve
+- Run the command in /DatingApp/API: dotnet watch --no-hot-reload
 # ASPNET-Core
 1. Check the dotnet information: dotnet --info
 2. Show dotnet help menu: dotnet -h
