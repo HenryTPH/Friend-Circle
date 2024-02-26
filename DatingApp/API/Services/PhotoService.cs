@@ -1,9 +1,15 @@
+using API.Helpers;
+using API.Interfaces;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Options;
+
 namespace API.Services;
 
 public class PhotoService: IPhotoService
 {
     private readonly Cloudinary _cloudinary;
-    public PhotoService(IOption<CloudinarySettings> config)
+    public PhotoService(IOptions<CloudinarySettings> config)
     {
         var acc = new Account
         (
@@ -22,7 +28,7 @@ public class PhotoService: IPhotoService
             using var stream = file.OpenReadStream();
             var uploadParams = new ImageUploadParams
             {
-                file = new FileDescription(file.FileName, stream),
+                File = new FileDescription(file.FileName, stream),
                 Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
                 Folder = "da-net7"
             };

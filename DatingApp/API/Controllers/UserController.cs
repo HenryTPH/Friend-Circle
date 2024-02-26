@@ -1,13 +1,11 @@
-using System.Net.NetworkInformation;
-using System.Security.Claims;
-using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace API.Controllers;
 [Authorize]
@@ -26,6 +24,7 @@ public class UserController: BaseApiController
         // _context = context;
         _userRepository = userRepository;
         _mapper = mapper;
+        _photoService = photoService;
     }
     
     // [AllowAnonymous]
@@ -82,7 +81,7 @@ public class UserController: BaseApiController
         };
         if(user.Photos.Count == 0) photo.IsMain = true;
         user.Photos.Add(photo);
-        if(await _userRepository.SaveAllAsync()) return _mapper.Map<PhotoDto>(photo);
+        if(await _userRepository.SaveAllAsync()) return _mapper.Map<PhotoDto>(photo);            
         return BadRequest("Problem adding photo");
     } 
 }
