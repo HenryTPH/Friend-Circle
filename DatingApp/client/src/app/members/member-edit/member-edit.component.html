@@ -40,27 +40,27 @@
                 <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
                     <h4 class="mt-2">Description</h4>
                     <textarea class="form-control" 
-                    [(ngModel)]="member.introduction" name="introduction"
+                    (ngModel)="member.introduction" name="introduction"
                     rows="6"></textarea>
                     <h4 class="mt-2">Looking for</h4>
                     <textarea class="form-control" 
-                    [(ngModel)]="member.lookingFor" name="lookingFor"
+                    (ngModel)="member.lookingFor" name="lookingFor"
                     rows="6"></textarea>
                     <h4 class="mt-2">Interests</h4>
                     <textarea class="form-control" 
-                    [(ngModel)]="member.interests" name="interests"
+                    (ngModel)="member.interests" name="interests"
                     rows="6"></textarea>
                     <h4 class="mt-2">Location Details:</h4>
                     <div class="d-flex flex-row align-items-center">
                         <label for="city">City:</label>
-                        <input type="text" [(ngModel)]="member.city" name="city" class="form-control mx-2">
+                        <input type="text" (ngModel)="member.city" name="city" class="form-control mx-2">
                         <label for="country">Country:</label>
-                        <input type="text" [(ngModel)]="member.country" name="country" class="form-control mx-2">
+                        <input type="text" (ngModel)="member.country" name="country" class="form-control mx-2">
                     </div>
                 </form>
             </tab>
             <tab heading="Edit Photos">
-                <p>Photo edit will go here!</p>
+                <app-photo-editor [member]="member"></app-photo-editor>
             </tab>
         </tabset>
     </div>
