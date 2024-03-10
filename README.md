@@ -1,1 +1,2 @@
-# ASPNET-Core
+THIS IS FRIEND CIRCLE APPLICATION
+*** Henry Tu ***
